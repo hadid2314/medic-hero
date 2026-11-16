@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Medic Hero by Shumile Chishty</title>
+<meta name="description" content="UKMLA Mnemonics: thirteen PDF revision booklets with 861 memory aids, plus a weekly series by final-year medical student Shumile Chishty.">
+<meta property="og:title" content="UKMLA Mnemonics by Medic Hero">
+<meta property="og:description" content="Thirteen PDF revision booklets with 861 memory aids for the UKMLA, written by a final-year medical student.">
+<meta property="og:image" content="https://shumiile.com/covers/ukmla-00.jpg">
+<meta property="og:type" content="website">
 <meta name="p:domain_verify" content="323aca48114c3403c0900f56ebcb84fc"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -193,6 +198,49 @@ textarea{min-height:140px;resize:vertical}
 .msg{font-family:var(--read);font-size:18px;min-height:1.4em}
 .mail{font-size:clamp(20px,3.4vw,34px);font-weight:800;font-stretch:80%;overflow-wrap:anywhere}
 
+
+/* home: sales page. The one moving part is the deal: the booklets start as a stack and deal out as you scroll. */
+.home-hero .screen-body{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);align-items:center;gap:32px}
+.home-hero .screen-body{padding-top:clamp(26px,4vw,48px);padding-bottom:clamp(26px,4vw,48px)}
+.home-hero h1{font-size:clamp(42px,5.8vw,80px);max-width:13ch}
+.home-hero .lede{max-width:46ch}
+.home-hero .note{font-size:15px;font-weight:600;opacity:.85}
+.fan{position:relative;width:100%;max-width:400px;aspect-ratio:1/1;justify-self:center}
+.fan img{position:absolute;top:50%;left:50%;width:54%;aspect-ratio:640/906;object-fit:cover;border-radius:4px 10px 10px 4px;box-shadow:8px 8px 0 var(--ink);transform:translate(-50%,-50%) translate(var(--x),var(--y)) rotate(var(--r))}
+@media (max-width:860px){
+  .home-hero .screen-body{grid-template-columns:1fr}
+  .fan{max-width:300px;aspect-ratio:5/4}
+  .fan img{width:46%}
+}
+.deal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:30px 22px}
+.bk{position:relative;display:grid;gap:4px;align-content:start;text-decoration:none}
+.bk img,.bk .cover{width:100%;aspect-ratio:640/906;object-fit:cover;border-radius:4px 10px 10px 4px;box-shadow:6px 6px 0 var(--ink);display:block;margin-bottom:8px;transition:box-shadow .15s,translate .15s}
+.bk .cover{padding:14px 12px 12px 20px}.bk .cover h3{font-size:20px}
+.bk:hover img,.bk:focus-visible img{translate:-2px -2px;box-shadow:9px 9px 0 var(--cobalt)}
+.bk b,.bk span{transition:opacity .25s}
+.bk b{font-size:18px;font-stretch:85%;line-height:1.12;opacity:var(--cap,1)}
+.bk span{font-family:var(--read);font-size:16px;color:var(--ink-soft);opacity:var(--cap,1)}
+@media (max-width:520px){
+  .deal-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px 14px}
+  .bk img,.bk .cover{box-shadow:4px 4px 0 var(--ink)}
+  .bk b{font-size:15px}.bk span{font-size:14px}
+}
+.offer{background:var(--ink);color:#fff;border-radius:var(--r-screen);display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:clamp(24px,5vw,56px);align-items:center;padding:clamp(24px,5vw,56px)}
+.offer img{width:100%;border-radius:6px 14px 14px 6px;box-shadow:10px 10px 0 var(--marquee);display:block}
+.offer h2{font-size:clamp(40px,6.4vw,84px)}
+.offer p{font-family:var(--read);font-size:clamp(19px,2vw,22px);line-height:1.45;max-width:44ch;margin-top:16px}
+.offer .actions{margin-top:24px}
+.offer small{display:block;margin-top:20px;font-size:14px;color:#B9B8CC;max-width:60ch}
+@media (max-width:720px){.offer{grid-template-columns:1fr}.offer img{max-width:240px}}
+.series .wall{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.buybar{position:fixed;left:0;right:0;bottom:0;z-index:18;background:var(--ink);color:#fff;transform:translateY(110%);transition:transform .25s;visibility:hidden}
+.buybar.on{transform:none;visibility:visible}
+.buybar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:10px;padding-bottom:10px}
+.buybar span{font-weight:700;line-height:1.2}
+.buybar .btn{padding:10px 18px;white-space:nowrap}
+@media (prefers-reduced-motion:reduce){.buybar{transition:none}}
+@media print{.buybar{display:none}}
+
 /* footer + subscribe */
 footer{margin-top:72px;background:var(--marquee);color:var(--ink)}
 .sub{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;align-items:center;padding:48px 20px}
@@ -240,6 +288,8 @@ footer{margin-top:72px;background:var(--marquee);color:var(--ink)}
   <div class="dock-body" id="dockBody"></div>
   <button class="dock-tab" id="dockTab" type="button" aria-controls="dockBody">Right now</button>
 </aside>
+
+<div class="buybar" id="buybar"></div>
 
 <footer>
   <div class="wrap sub" id="subscribe">
@@ -491,23 +541,55 @@ const nowAndProgress = () => `${SITE.now.length ? `<section class="wrap"><div cl
 const hero = () => POSTS.find(p => p.featured) || POSTS[0];
 const pages = {
   home(){
-    const p = hero(), rest = POSTS.filter(x => x !== p).slice(0, 4);
+    const bundle = BOOKS.find(x => /complete set/i.test(x.title)), singles = BOOKS.filter(x => x !== bundle);
+    const aids = bundle && (/(\d[\d,]*) memory aids/.exec(bundle.text) || [])[1];
+    const num = x => { const m = /^£(\d+(?:\.\d+)?)$/.exec(x.price || ""); return m ? +m[1] : NaN; };
+    const total = singles.reduce((a, x) => a + num(x), 0), setPrice = bundle ? num(bundle) : NaN;
+    const one = singles.length && singles.every(x => x.price === singles[0].price) ? singles[0].price : "";
+    const name = x => x.title.replace(/^UKMLA Mnemonics\s*\d*\s*[·:]?\s*/, "") || x.title;
+    const count = x => (/(\d+) memory aids/.exec(x.text) || [])[1];
+    const setBtn = bundle && bundle.buy ? `<a class="btn pop" href="${bundle.buy}" target="_blank" rel="noopener">Get all ${singles.length} for ${bundle.price}</a>` : `<a class="btn pop" href="#shop">See the e-books</a>`;
+    const fan = singles.filter(x => x.img).slice(0, 3);
+    const p = hero(), latest = [p, ...POSTS.filter(x => x !== p)].filter(Boolean).slice(0, 4);
     return `<div class="wrap">
-      <div class="screen play" style="${style(p.genre)}">
-        <div class="bar"><span>Medic Hero presents</span><em>${epLabel(p)}</em></div>
+      <div class="screen play home-hero" style="--g:#2B3BFF;--on:#fff">
+        <div class="bar"><span>Medic Hero presents</span><em>UKMLA Mnemonics</em></div>
         <div class="screen-body">
-          ${p.ep ? `<div class="ghost-num" aria-hidden="true">${p.ep}</div>` : ""}
-          <div class="chips"><span class="chip light">Now showing</span><span class="chip">${p.mins} min read</span></div>
-          <h1>${p.title}</h1>
-          <p class="lede">${p.blurb} ${esc(SITE.tagline)}</p>
-          <div class="actions"><a class="btn pop" href="#post-${p.id}">Read this episode</a><a class="btn ghost" href="#blog">See every episode</a></div>
+          <div style="display:grid;gap:22px">
+            <h1>${aids ? aids + " memory aids for the UKMLA" : "Memory aids for the UKMLA"}</h1>
+            <p class="lede">${singles.length} PDF booklets mapped to the GMC MLA content map, written by a final-year medical student sitting the same exam.</p>
+            <div class="actions">${setBtn}${singles.length ? `<button class="btn ghost" type="button" data-jump="deal">${one ? "Choose one for " + one : "Choose a booklet"}</button>` : ""}</div>
+            <p class="note">Checkout opens on Payhip. Your PDF downloads as soon as you pay.</p>
+          </div>
+          ${fan.length === 3 ? `<div class="fan" aria-hidden="true">
+            <img src="${fan[2].img}" alt="" style="--x:34%;--y:4%;--r:11deg">
+            <img src="${fan[1].img}" alt="" style="--x:-34%;--y:4%;--r:-11deg">
+            <img src="${fan[0].img}" alt="" style="--x:0%;--y:-3%;--r:0deg">
+          </div>` : ""}
         </div>
-        <div class="bar"><span>${p.date}</span><em>A blog you read like a film</em></div>
+        <div class="bar"><span>For AKT and CPSA revision</span><em>Scroll to deal the set</em></div>
       </div></div>
-      ${rest.length ? `<section class="wrap"><div class="head"><h2>Latest</h2><p>The newest posts. Every post is a poster.</p><a class="btn" href="#blog">See every episode</a></div>
-        <div class="wall">${rest.map(poster).join("")}</div></section>` : ""}
-      <section class="wrap"><div class="head"><h2>From the bookshelf</h2><p>Revision e-books I'm writing for medical students.</p><a class="btn" href="#shop">See all e-books</a></div>
-        <div class="shelf">${BOOKS.slice(0,3).map(book).join("")}</div></section>`;
+      ${singles.length ? `<section class="wrap" id="deal"><div class="head"><h2>${singles.length} booklets, one for each part of the exam</h2><p>Buy the one you're weakest on, or take the lot. Tap a cover to buy it.</p></div>
+        <div class="deal-grid" id="dealGrid">${singles.map(x => `<a class="bk" href="${x.buy || "#shop"}"${x.buy ? ' target="_blank" rel="noopener"' : ""}>
+          ${x.img ? `<img src="${x.img}" alt="" loading="lazy">` : `<div class="cover" style="${style(x.genre)}"><h3>${name(x)}</h3></div>`}
+          <b>${name(x)}</b><span>${[count(x) ? count(x) + " memory aids" : "", x.price].filter(Boolean).join(", ")}</span></a>`).join("")}</div></section>` : ""}
+      ${bundle ? `<section class="wrap" id="offer"><div class="offer">
+        ${bundle.img ? `<img src="${bundle.img}" alt="The complete set of UKMLA Mnemonics booklets" loading="lazy">` : ""}
+        <div><h2>All ${singles.length} for ${bundle.price}</h2>
+          <p>${total > setPrice ? `Buying them one at a time comes to £${total}. ` : ""}The set is one download${aids ? " with all " + aids + " memory aids" : ""}, plus the bedside examination routines.</p>
+          <div class="actions">${bundle.buy ? `<a class="btn pop" href="${bundle.buy}" target="_blank" rel="noopener">Get the set for ${bundle.price}</a>` : ""}<a class="btn ghost" href="#shop">Read about each booklet</a></div>
+          <small>PDF e-books sold through Payhip. For exam revision only, not for patient care. Not affiliated with the GMC.</small></div>
+      </div></section>` : ""}
+      <section class="wrap two">
+        <div class="prose"><h2 style="font-size:clamp(34px,5vw,52px)">Written by a student, for the exam I'm sitting too</h2>
+          <p>I'm Shumile. ${esc(SITE.aboutLede)}</p>
+          ${SITE.badges.length ? `<div class="badges">${SITE.badges.map(x => `<span class="chip">${esc(x)}</span>`).join("")}</div>` : ""}
+          <div class="actions"><a class="btn" href="#about">More about me</a></div></div>
+        <div class="prose series"><h2 style="font-size:clamp(34px,5vw,52px)">There's a series too</h2>
+          <p>${esc(SITE.tagline)}</p>
+          ${latest.length ? `<div class="wall">${latest.slice(0, 2).map(poster).join("")}</div>` : ""}
+          <div class="actions"><a class="btn" href="#blog">See every episode</a></div></div>
+      </section>`;
   },
   blog(){
     return `<div class="wrap"><div class="screen" style="--g:#0F0E24;--on:#fff"><div class="screen-body">
@@ -623,6 +705,7 @@ function render(){
   window.scrollTo(0,0);
   document.querySelector(".preview").hidden = live;
   paintFooter(); paintDock(isPost && POSTS.find(p => p.id === h.slice(5)));
+  paintBuybar(name === "home" && !isPost); dealMeasure();
   if(sb){
     let ref = ""; try{ const r = document.referrer && new URL(document.referrer).hostname; if(r && r !== location.hostname) ref = r.replace(/^www\./, "").slice(0, 60); }catch(e){}
     sb.from("views").insert({path:(isPost ? h : name).slice(0, 70), entry:!seen, ref:seen ? "" : ref, device:innerWidth < 700 ? "mobile" : "desktop"}).then(() => {}, () => {});
@@ -649,12 +732,55 @@ function setDock(open){
   if(open && pl && !pl.firstChild) pl.innerHTML = `<iframe title="Spotify player" src="${pl.dataset.src}" height="${pl.dataset.h}" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
 }
 $("#dockTab").addEventListener("click", () => { const open = $("#dockBody").hidden; setDock(open); try{ localStorage.setItem("dock", open ? "open" : "closed"); }catch(e){} });
+// Home: sticky buy bar, and the deal (booklets start stacked and deal out into the grid on scroll).
+function paintBuybar(on){
+  const bundle = on && BOOKS.find(x => /complete set/i.test(x.title)), bar = $("#buybar");
+  bar.classList.remove("on");
+  bar.innerHTML = bundle && bundle.buy ? `<div class="wrap"><span>UKMLA Mnemonics, the complete set</span><a class="btn pop" href="${bundle.buy}" target="_blank" rel="noopener">Get it for ${bundle.price}</a></div>` : "";
+}
+let deal = null;
+const calm = matchMedia("(prefers-reduced-motion:reduce)");
+function dealMeasure(){
+  const g = $("#dealGrid"); deal = null;
+  if(!g || calm.matches){ if(g) [...g.children].forEach(c => { c.style.transform = ""; c.style.removeProperty("--cap"); }); fxTick(); return; }
+  const cards = [...g.children]; cards.forEach(c => c.style.transform = "");
+  const gr = g.getBoundingClientRect(), first = cards[0].getBoundingClientRect();
+  const ox = gr.left + gr.width / 2, oy = first.top + first.height / 2;
+  deal = {g, cards, off:cards.map((c, i) => { const r = c.getBoundingClientRect(); return [ox - (r.left + r.width / 2), oy - (r.top + r.height / 2), ((i * 37) % 17) - 8]; })};
+  fxTick();
+}
+function fxTick(){
+  const vh = innerHeight;
+  if(deal && deal.g.isConnected){
+    const n = deal.cards.length, lag = .035, top = deal.g.getBoundingClientRect().top;
+    const p = Math.max(0, Math.min(1, (vh * .8 - top) / (vh * .6)));
+    deal.cards.forEach((c, i) => {
+      const t = Math.max(0, Math.min(1, (p - i * lag) / (1 - (n - 1) * lag))), e = 1 - Math.pow(1 - t, 3), [dx, dy, r] = deal.off[i];
+      c.style.transform = e >= 1 ? "" : `translate(${dx * (1 - e)}px,${dy * (1 - e)}px) rotate(${r * (1 - e)}deg)`;
+      c.style.zIndex = e >= 1 ? "" : n - i; c.style.setProperty("--cap", p > .97 ? 1 : 0);
+    });
+  }
+  const bar = $("#buybar");
+  if(bar.firstChild){
+    const hero = document.querySelector(".home-hero"), offer = $("#offer"), foot = document.querySelector("footer");
+    const past = hero && hero.getBoundingClientRect().bottom < 60;
+    const seen = el => { if(!el) return false; const r = el.getBoundingClientRect(); return r.top < vh - 80 && r.bottom > 80; };
+    bar.classList.toggle("on", !!past && !seen(offer) && !seen(foot));
+  }
+}
+let fxWait = false;
+addEventListener("scroll", () => { if(fxWait) return; fxWait = true; requestAnimationFrame(() => { fxWait = false; fxTick(); }); }, {passive:true});
+addEventListener("resize", dealMeasure); addEventListener("load", dealMeasure);
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(dealMeasure);
+
 function focusSub(){ $("#subscribe").scrollIntoView(); $("#subEmail").focus({preventScroll:true}); }
 
 document.addEventListener("click", e => {
   const f = e.target.closest("[data-f]");
   if(f){ curF = f.dataset.f; $("#filterHost").innerHTML = filterBar(curF); $("#wall").innerHTML = wall(); return; }
   if(e.target.closest("[data-sub]")){ e.preventDefault(); focusSub(); }
+  const j = e.target.closest("[data-jump]");
+  if(j){ const t = document.getElementById(j.dataset.jump); if(t) scrollTo({top:t.getBoundingClientRect().top + scrollY - 76, behavior:calm.matches ? "auto" : "smooth"}); }
 });
 document.addEventListener("submit", e => {
   e.preventDefault();
